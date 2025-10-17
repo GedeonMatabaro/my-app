@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,18 +10,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/backend": "^1.16.1",
+    "@aws-amplify/ui-react": "^6.13.0",
+    "@aws-amplify/ui-react-liveness": "^3.4.6",
+    "@aws-sdk/client-rekognition": "^3.911.0",
+    "@aws-sdk/s3-request-presigner": "^3.911.0",
+    "@awsui/components-react": "^3.0.1664",
+    "aws-amplify": "^6.15.7",
+    "lucide-react": "^0.546.0",
+    "next": "14.2.33",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.33"
+    "react-responsive-modal": "^7.1.0",
+    "use-awsui-router": "^2.0.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.33",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.33"
+    "typescript": "^5"
   }
 }

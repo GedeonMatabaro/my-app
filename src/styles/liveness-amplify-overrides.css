@@ -1,0 +1,172 @@
+/*********************************************************
+* UI + Liveness — consolidated overrides (all-white, no dim)
+* Load AFTER:
+*   @aws-amplify/ui-react/styles.css
+*   @aws-amplify/ui-react-liveness/styles.css
+*   react-responsive-modal/styles.css
+**********************************************************/
+
+/* ======================== THEME TOKENS ======================== */
+:root{
+  --rrm-accent:#7b3f00; /* chocolate */
+  --rrm-bg:#fff;        /* force white UI */
+  --rrm-fg:#111;
+  --rrm-radius:18px;
+  --rrm-shadow:0 24px 60px rgba(0,0,0,.12); /* softer shadow */
+  --rrm-border:1.5px solid #e9e4e0;
+}
+/* keep same palette even in dark mode (you asked for all white) */
+@media (prefers-color-scheme:dark){
+  :root{
+    --rrm-bg:#fff;
+    --rrm-fg:#111;
+    --rrm-shadow:0 24px 60px rgba(0,0,0,.12);
+    --rrm-border:1.5px solid #e9e4e0;
+  }
+}
+
+/* hard stop: never allow filters/backdrops inside the liveness root */
+#liveness-root, 
+#liveness-root * {
+  filter:none!important; -webkit-filter:none!important;
+  backdrop-filter:none!important; -webkit-backdrop-filter:none!important;
+  mix-blend-mode:normal!important;
+  opacity:1!important;
+  forced-color-adjust:none; /* opt-out of UA color forcing */
+  background-color:transparent; /* let underlying white show unless set below */
+}
+
+/* ==================== REACT-RESPONSIVE-MODAL =================== */
+
+.react-responsive-modal-root{position:fixed; inset:0; z-index:1000;}
+/* no dark overlay, no blur — keep page bright */
+.react-responsive-modal-overlay{
+  position:fixed; inset:0; z-index:-1;
+  background:transparent!important;
+  backdrop-filter:none!important;
+}
+.react-responsive-modal-container{
+  height:100%; outline:0; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  padding:clamp(12px,3vw,28px); text-align:unset;
+}
+.react-responsive-modal-overlay,
+.react-responsive-modal-container,
+.react-responsive-modal-modal{animation-fill-mode:forwards!important;}
+.react-responsive-modal-modal{
+  width:min(92vw,46rem); max-height:min(88vh,900px);
+  background:#fff; color:var(--rrm-fg);
+  border:var(--rrm-border); border-radius:var(--rrm-radius);
+  box-shadow:var(--rrm-shadow);
+  padding:clamp(16px,3vw,28px); margin:0; display:grid;
+  gap:clamp(10px,2vw,18px); overflow:auto; text-align:left;
+}
+@media (max-width:380px){
+  .react-responsive-modal-modal{width:94vw; padding:14px; border-radius:14px;}
+}
+.react-responsive-modal-closeButton{
+  position:absolute; top:10px; right:10px; display:grid; place-items:center;
+  width:38px; height:38px; border-radius:999px;
+  border:1px solid #e3ddd8;
+  background:#fff; cursor:pointer;
+  transition:transform .15s ease, background-color .2s, border-color .2s;
+}
+.react-responsive-modal-closeButton:hover{transform:scale(1.04); background:#fff;}
+.react-responsive-modal-closeButton:focus-visible{outline:2px solid var(--rrm-accent); outline-offset:2px;}
+
+@keyframes react-responsive-modal-overlay-in{from{opacity:0} to{opacity:1}}
+@keyframes react-responsive-modal-overlay-out{from{opacity:1} to{opacity:0}}
+@keyframes react-responsive-modal-modal-in{0%{transform:translateY(6px) scale(.98); opacity:0}60%{transform:translateY(0) scale(1.005); opacity:1}100%{transform:translateY(0) scale(1)}}
+@keyframes react-responsive-modal-modal-out{from{transform:translateY(0) scale(1); opacity:1} to{transform:translateY(6px) scale(.98); opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .react-responsive-modal-overlay,.react-responsive-modal-modal{animation:none!important;}
+}
+.rrm-modal-title{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; font-weight:600; line-height:1.2; margin:0 0 .25rem 0;}
+.rrm-modal-actions{display:flex; flex-wrap:wrap; gap:.75rem; justify-content:flex-end; margin-top:.5rem;}
+@supports(padding:max(0px)){.react-responsive-modal-container{padding-bottom:max(24px,env(safe-area-inset-bottom));}}
+
+/* ========================= LIVENESS SCOPE ====================== */
+
+.lv-scope{display:grid; justify-items:center; width:100%; background:#fff;}
+/* keep media in color, on its own layer */
+.lv-scope video, .lv-scope canvas, .lv-scope .amplify-liveness-video{
+  -webkit-filter:none!important; filter:none!important;
+  transform:translateZ(0); will-change:transform; backface-visibility:hidden;
+}
+
+/* Detector frame */
+.lv-card{padding:clamp(10px,2vw,16px); border-radius:18px; border:1.5px solid #7b3f00; background:#fff;}
+.lv-detector-box{
+  width:min(740px,96vw); margin-inline:auto;
+  border:1px solid #ede9e6; border-radius:16px; overflow:hidden;
+  aspect-ratio:3/4; max-height:min(78vh,680px);
+  background:#fff;
+}
+
+/* Our instruction bar (above video) */
+.lv-instructions{
+  position:sticky; top:0; z-index:5;
+  background:#fff;
+  border:1px solid #ede9e6; border-radius:12px; padding:8px 12px; margin-bottom:8px;
+}
+.lv-instructions-text{margin:0; font-weight:600; font-size:clamp(.9rem,1.6vw,1rem);}
+
+/* Amplify’s instruction overlay → compact top toast (no dim) */
+.lv-scope .amplify-liveness-instruction-overlay{
+  position:absolute!important;
+  inset:8px 8px auto 8px!important;
+  justify-content:center!important; align-items:stretch!important;
+  background:transparent!important; pointer-events:none; z-index:4;
+}
+.lv-scope .amplify-liveness-toast{
+  margin:0 auto!important; max-width:92%!important;
+  border-radius:12px!important; box-shadow:0 10px 30px rgba(0,0,0,.08)!important;
+  padding:8px 12px!important; font-size:clamp(12px,2.6vw,14px)!important;
+  pointer-events:auto; background:#fff!important; color:#111!important;
+}
+
+/* Keep “Start video check” reachable — solid white (no blur/gradient) */
+.lv-scope .liveness-detector-check > .amplify-flex:last-child{
+  position:sticky; bottom:0; z-index:5;
+  background:#fff!important;  /* << all white */
+  padding:10px 6px 6px;
+  border-top:1px solid #eee;
+}
+.lv-scope .liveness-detector-check > .amplify-flex:last-child .amplify-button--primary{
+  min-width:min(280px,90%); font-weight:600;
+}
+
+/* Hide internal overlays when not recording */
+.lv-hide-overlays .amplify-liveness-instruction-overlay,
+.lv-hide-overlays .amplify-liveness-start-screen-warning{display:none!important;}
+
+/* Results */
+.lv-result-img{width:min(280px,60vw); border-radius:12px; border:1px solid #e8e2dd; box-shadow:0 8px 32px rgba(0,0,0,.08); background:#fff;}
+.lv-verifying{display:grid; place-items:center; gap:10px;}
+.lv-spinner{width:34px; height:34px; border-radius:50%; border:3px solid #d6d6d6; border-top-color:#7b3f00; animation:lv-spin .9s linear infinite;}
+@keyframes lv-spin{to{transform:rotate(360deg)}}
+
+/* Small screens */
+@media (max-width:560px){
+  .lv-card{padding:10px;}
+  .lv-detector-box{max-height:72vh;}
+}
+@media (max-width:380px){
+  .lv-instructions{padding:6px 10px;}
+  .lv-detector-box{max-height:68vh;}
+}
+
+/* ================== COLOR-FIDELITY "RECORDING MODE" ============== */
+/* While detector is mounted, enforce white + no filters anywhere */
+.lv-recording, .lv-recording body, .lv-recording html{
+  background:#fff!important;
+}
+.lv-recording, .lv-recording *{
+  -webkit-filter:none!important; filter:none!important;
+  -webkit-backdrop-filter:none!important; backdrop-filter:none!important;
+  mix-blend-mode:normal!important; forced-color-adjust:none!important;
+}
+/* no modal dim either while recording */
+.lv-recording .react-responsive-modal-overlay{background:transparent!important;}
+/* isolate detector from ancestor blending */
+.lv-scope, .lv-detector-box{isolation:isolate; contain:paint;}

@@ -1,0 +1,76 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "amplify-myapp-MARTIN-sandbox-cfd1a87c43/storage/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region-e31788a2": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "0f848888003c2f96eb707f2855a9b50ee3d7eaad8358e83697bc1c02e7168799": {
+      "displayName": "auth Nested Stack Template",
+      "source": {
+        "path": "amplifymyappMARTINsandboxcfd1a87c43authA676BF70.nested.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-81e98ad6": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "0f848888003c2f96eb707f2855a9b50ee3d7eaad8358e83697bc1c02e7168799.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "d2c56dfaf0c3f6fc8707c4437790f0ffebce138132e947fbcc11b61104058508": {
+      "displayName": "storage Nested Stack Template",
+      "source": {
+        "path": "amplifymyappMARTINsandboxcfd1a87c43storage4CB25001.nested.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-44bf4c7e": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "d2c56dfaf0c3f6fc8707c4437790f0ffebce138132e947fbcc11b61104058508.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "bb832538b1ec0e9ce2b76209152e0bb31b258788d8a83ab550d08f4ed8c4b56f": {
+      "displayName": "liveness-stack Nested Stack Template",
+      "source": {
+        "path": "amplifymyappMARTINsandboxcfd1a87c43livenessstackA7C84824.nested.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-246085d3": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "bb832538b1ec0e9ce2b76209152e0bb31b258788d8a83ab550d08f4ed8c4b56f.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "947ce9458c426e770be1599ddf67eee00b1c4c7ea0286483861c5eae3918396f": {
+      "displayName": "amplify-myapp-MARTIN-sandbox-cfd1a87c43 Template",
+      "source": {
+        "path": "amplify-myapp-MARTIN-sandbox-cfd1a87c43.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-e8891949": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "947ce9458c426e770be1599ddf67eee00b1c4c7ea0286483861c5eae3918396f.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

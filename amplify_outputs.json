@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "user_pool_id": "us-east-1_Dd7TiwvOd",
+    "aws_region": "us-east-1",
+    "user_pool_client_id": "4p7fc2epi12aul0gkrmarbiq8g",
+    "identity_pool_id": "us-east-1:bb53cccc-c566-478f-9dd7-0b0d69f9acae",
+    "mfa_methods": [],
+    "standard_required_attributes": [
+      "email"
+    ],
+    "username_attributes": [
+      "email"
+    ],
+    "user_verification_types": [
+      "email"
+    ],
+    "groups": [],
+    "mfa_configuration": "NONE",
+    "password_policy": {
+      "min_length": 8,
+      "require_lowercase": true,
+      "require_numbers": true,
+      "require_symbols": true,
+      "require_uppercase": true
+    },
+    "unauthenticated_identities_enabled": true
+  },
+  "storage": {
+    "aws_region": "us-east-1",
+    "bucket_name": "amplify-myapp-martin-sand-livenessstorebucketb7564-pixtrnzpptkx",
+    "buckets": [
+      {
+        "name": "liveness-store",
+        "bucket_name": "amplify-myapp-martin-sand-livenessstorebucketb7564-pixtrnzpptkx",
+        "aws_region": "us-east-1"
+      }
+    ]
+  },
+  "version": "1.4"
+}

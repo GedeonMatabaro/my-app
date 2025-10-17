@@ -1,0 +1,156 @@
+/* === React Responsive Modal — tasteful overrides === */
+/* theme tokens (tweak to your taste) */
+:root {
+  --rrm-accent: #7b3f00;             /* chocolate */
+  --rrm-bg: #ffffff;
+  --rrm-fg: #111111;
+  --rrm-radius: 18px;
+  --rrm-shadow: 0 24px 60px rgba(0,0,0,.25);
+  --rrm-border: 1.5px solid color-mix(in oklab, var(--rrm-accent) 65%, #000 0%);
+}
+
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rrm-bg: #0f1115;
+    --rrm-fg: #f5f5f5;
+    --rrm-shadow: 0 24px 60px rgba(0,0,0,.55);
+    --rrm-border: 1.2px solid color-mix(in oklab, var(--rrm-accent) 70%, #fff 10%);
+  }
+}
+
+/* root & overlay */
+.react-responsive-modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* ensure above page chrome */
+}
+
+/* add subtle blur + stronger dim */
+.react-responsive-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* keeps it behind the container (lib behavior) */
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+}
+
+/* use flex centering (works better across browsers) */
+.react-responsive-modal-container {
+  height: 100%;
+  outline: 0;
+  overflow: hidden;                 /* prevent double scrollbars */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vw, 28px);
+  text-align: unset;                /* we’ll handle alignment in modal */
+}
+
+/* keep the lib's animation fill behavior */
+.react-responsive-modal-overlay,
+.react-responsive-modal-container,
+.react-responsive-modal-modal {
+  animation-fill-mode: forwards !important;
+}
+
+/* modal itself — responsive box with nice border & radius */
+.react-responsive-modal-modal {
+  width: min(92vw, 46rem);
+  max-height: min(88vh, 900px);
+  background: var(--rrm-bg);
+  color: var(--rrm-fg);
+  border: var(--rrm-border);
+  border-radius: var(--rrm-radius);
+  box-shadow: var(--rrm-shadow);
+  padding: clamp(16px, 3vw, 28px);
+  margin: 0;                        /* centered via container, not margins */
+  display: grid;
+  gap: clamp(10px, 2vw, 18px);
+  overflow: auto;                   /* content scrolls inside */
+  text-align: left;
+}
+
+/* tighter on very small screens (e.g., older Android) */
+@media (max-width: 380px) {
+  .react-responsive-modal-modal {
+    width: 94vw;
+    padding: 14px;
+    border-radius: 14px;
+  }
+}
+
+/* close button — bigger hit area, subtle hover */
+.react-responsive-modal-closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--rrm-accent) 45%, #888 55%);
+  background: color-mix(in oklab, var(--rrm-bg) 88%, var(--rrm-accent) 12%);
+  cursor: pointer;
+  transition: transform .15s ease, background-color .2s ease, border-color .2s ease;
+}
+.react-responsive-modal-closeButton:hover {
+  transform: scale(1.04);
+  background: color-mix(in oklab, var(--rrm-bg) 78%, var(--rrm-accent) 22%);
+}
+.react-responsive-modal-closeButton:focus-visible {
+  outline: 2px solid var(--rrm-accent);
+  outline-offset: 2px;
+}
+
+/* entry/exit animations: smoother + slightly springy */
+@keyframes react-responsive-modal-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes react-responsive-modal-overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes react-responsive-modal-modal-in {
+  0%   { transform: translateY(6px) scale(.98); opacity: 0; }
+  60%  { transform: translateY(0) scale(1.005); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes react-responsive-modal-modal-out {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateY(6px) scale(.98); opacity: 0; }
+}
+
+/* respect reduced motion prefs */
+@media (prefers-reduced-motion: reduce) {
+  .react-responsive-modal-overlay,
+  .react-responsive-modal-modal {
+    animation: none !important;
+  }
+}
+
+/* optional utilities for content inside your modal */
+.rrm-modal-title {
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 .25rem 0;
+}
+
+.rrm-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  justify-content: flex-end;
+  margin-top: .5rem;
+}
+
+/* keep content from hugging edges on very tall screens */
+@supports (padding: max(0px)) {
+  .react-responsive-modal-container {
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}
