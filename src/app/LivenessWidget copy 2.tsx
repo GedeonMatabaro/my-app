@@ -7,11 +7,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { ensureAmplifyConfigured } from '@/lib/amplifyClient';
 import { Modal } from 'react-responsive-modal';
-import '@aws-amplify/ui-react/styles.css';
 import 'react-responsive-modal/styles.css';
-import '@aws-amplify/ui-react-liveness/styles.css';
-import '@/styles/liveness-amplify-overrides.css';
-
 import { useRouter } from 'next/navigation';
 
 import {
@@ -28,56 +24,38 @@ import {
 import { createSessionServer, getResultsServer } from '@/app/actions/rekog';
 import { X, Camera as CameraIcon, Check as CheckIcon } from 'lucide-react';
 
-// shadcn dropdown & button
+// ⬇️ shadcn dropdown & button
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button as ShButton } from '@/components/ui/button';
-import { IdDataDto, LivenessResultDto, MockUserDto } from '@/lib/dtos/verification';
-
-
 
 const FaceLivenessDetector = dynamic(
   () => import('@aws-amplify/ui-react-liveness').then((m) => m.FaceLivenessDetector),
   { ssr: false, loading: () => <p>Loading camera…</p> }
 );
 
-export interface LivenessWidgetProps {
-  idData: IdDataDto;
-  onSuccess: (data: LivenessResultDto) => void;
-  onFail: (data: LivenessResultDto) => void;
-  onMaxFail: () => void;
-  onLoading: (loading: boolean, message?: string) => void;
-  mockUser: MockUserDto;
-}
-
 // Configure Amplify once (only if you’re using Amplify Identity Pool guest creds)
 ensureAmplifyConfigured();
 
-type Phase = 'idle' | 'recording' | 'verifying' | 'done' | 'failed' | 'maxFailed';
+type Phase = 'idle' | 'recording' | 'verifying' | 'done' | 'failed';
 
-export default function LivenessWidget(
-  props: LivenessWidgetProps
-) {
-  const { idData, onSuccess, onFail, onMaxFail, onLoading, mockUser } = props;
+export default function LivenessWidget() {
   const { tokens } = useTheme();
   const router = useRouter();
 
   // ----- existing state -----
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   const [phase, setPhase] = React.useState<Phase>('idle');
-  const [attempts, setAttempts] = React.useState<number>(0);
-  const [confidence, setConfidence] = React.useState<number | null>(null);
   const [showDetector, setShowDetector] = React.useState<boolean>(false);
   const [imageData, setImageData] = React.useState<{ Confidence?: number; userSelectedConfidence?: number; Status?: string } | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageUrl, setImageUrl] = React.useState<string | null>(null);
-  const [openConsent, setOpenConsent] = React.useState<boolean>(false);
+  const [openConsent, setOpenConsent] = React.useState<boolean>(true);
   const region = process.env.NEXT_PUBLIC_AWS_REGION || 'eu-west-1';
 
   // ----- camera selection (outside Amplify) -----
   const [cameras, setCameras] = React.useState<MediaDeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = React.useState<string | null>(null);
   const [hasPermission, setHasPermission] = React.useState<boolean>(false);
-  const [initialized, setInitialized] = React.useState(false);
 
   // keep original getUserMedia so we can restore on unmount
   const originalGUMRef = React.useRef<typeof navigator.mediaDevices.getUserMedia | null>(null);
@@ -110,28 +88,17 @@ export default function LivenessWidget(
     }
   }, []);
 
-  // const enumerateCameras = React.useCallback(async () => {
-  //   if (!navigator?.mediaDevices?.enumerateDevices) return;
-  //   const list = await navigator.mediaDevices.enumerateDevices();
-  //   const vids = list.filter((d) => d.kind === 'videoinput');
-  //   // prefer non-IR
-  //   const sorted = [...vids].sort((a, b) => scoreDevice(b) - scoreDevice(a));
-  //   setCameras(sorted.length ? sorted : vids);
-  //   if (!selectedCamera) {
-  //     const pick = (sorted[0] || vids[0] || null)?.deviceId ?? null;
-  //     setSelectedCamera(pick);
-  //   }
-  // }, [selectedCamera]);
-
   const enumerateCameras = React.useCallback(async () => {
-    if (!navigator?.mediaDevices?.enumerateDevices) return null;
+    if (!navigator?.mediaDevices?.enumerateDevices) return;
     const list = await navigator.mediaDevices.enumerateDevices();
     const vids = list.filter((d) => d.kind === 'videoinput');
+    // prefer non-IR
     const sorted = [...vids].sort((a, b) => scoreDevice(b) - scoreDevice(a));
     setCameras(sorted.length ? sorted : vids);
-    const pick = (sorted[0] || vids[0] || null)?.deviceId ?? null;
-    if (!selectedCamera) setSelectedCamera(pick);
-    return pick;                                   // ← return it
+    if (!selectedCamera) {
+      const pick = (sorted[0] || vids[0] || null)?.deviceId ?? null;
+      setSelectedCamera(pick);
+    }
   }, [selectedCamera]);
 
   // Monkey-patch getUserMedia to always use our selected camera (outside Amplify)
@@ -192,7 +159,7 @@ export default function LivenessWidget(
       }
       // Unmount the widget and start a fresh session so Amplify calls gUM again (now patched)
       setShowDetector(false);
-      setPhase('recording');
+      setPhase('idle');
       await startSession();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -201,26 +168,23 @@ export default function LivenessWidget(
 
   // ----- session helpers -----
   const startSession = React.useCallback(async () => {
-    if (!initialized) setPhase('idle'); // only on first mount
+    setPhase('idle');
     setImageUrl(null);
     setImageData(null);
     setSessionId(null);
 
-    onLoading(true, 'Starting a Live Session…');  // lift loading
     const out = await createSessionServer();
-    onLoading(false);
     console.log('[client] createSessionServer ->', out);
 
     if ('sessionId' in out && out.sessionId) {
       setSessionId(out.sessionId!);
       setShowDetector(true);
       setPhase('recording');
-      if (!initialized) setInitialized(true);
     } else {
       console.error('[client] Failed to create session', out);
       setPhase('failed');
     }
-  }, [initialized, onLoading]);
+  }, []);
 
   const goHome = React.useCallback(() => {
     setPhase('idle');
@@ -259,28 +223,11 @@ export default function LivenessWidget(
     try {
       await ensurePermission();
     } catch {}
-
-    try { await ensurePermission(); } catch {}            
-    const pick = await enumerateCameras();      
-    applyGumPatch(pick);   
+    await enumerateCameras();
+    applyGumPatch(selectedCamera);
     await startSession();
   };
 
-  const handleFail = (result: LivenessResultDto) => {
-    setAttempts(prev => {
-      const newAttempts = prev + 1;
-      if (newAttempts >= 3) {
-        setPhase('maxFailed');
-        onMaxFail();
-      } else {
-        setPhase('failed');
-      }
-      return newAttempts;
-    });
-
-    onFail(result); // lift to parent
-  };
-  
   const onUserCancel = async () => {
     console.log('[client] user cancelled — restarting session');
     await startSession();
@@ -307,25 +254,8 @@ export default function LivenessWidget(
     else if (res.referenceImageBase64) setImageUrl(`data:image/jpeg;base64,${res.referenceImageBase64}`);
     else setImageUrl(null);
 
-    if (res.status === 'SUCCEEDED' && confidence >= 80) {
-      setPhase('done');
-      const result: LivenessResultDto = {
-        score: confidence,
-        refUrl: res.referenceImageUrl || '',
-        status: 'success',
-        timestamp: new Date().toISOString(),
-      }
-      onSuccess(result);
-    } else {
-      const result: LivenessResultDto = {
-        score: confidence,
-        refUrl: res.referenceImageUrl || '',
-        status: 'fail',
-        timestamp: new Date().toISOString(),
-      }
-      handleFail(result);
-    }
-    
+    if (res.status === 'SUCCEEDED' && confidence >= 80) setPhase('done');
+    else setPhase('failed');
   };
 
   // Color-fidelity guard (keep)
@@ -373,7 +303,7 @@ export default function LivenessWidget(
           <CameraIcon size={18} />
         </ShButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" side="bottom" className="w-64 z-[99999]">
+      <DropdownMenuContent align="center" side="bottom" className="w-64">
         {!hasPermission && (
           <DropdownMenuItem
             onClick={async () => {
@@ -434,9 +364,9 @@ export default function LivenessWidget(
           {/* Header: title | camera dropdown | close */}
           <Alert variation="info" hasIcon>
             <Flex alignItems="center" justifyContent="space-between" width="100%" gap="0.75rem">
-              <span className='font-bold text-sm md:text-base'>
+              <Heading level={6} margin="0" style={{ whiteSpace: 'nowrap' }}>
                 Verification Session
-              </span>
+              </Heading>
 
               <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                 {CameraDropdown}
@@ -448,18 +378,10 @@ export default function LivenessWidget(
             </Flex>
           </Alert>
 
-          <Card  style={{ padding: 16, marginTop: 16, borderRadius: 12 }}>
+          <Card>
             <Flex justifyContent="center">
               {showDetector ? (
-                <View as="div" style={{ height: 500, width: 740, maxWidth: '100%' }}>
-                  <Alert variation='info' hasIcon={false}>
-                    <Flex alignItems="center" justifyContent="center" width="100%" gap="0.75rem">
-                      <span className='font-semibold text-xs md:text-base'>
-                         Center your face in the frame and follow the instructions
-                      </span>
-
-                    </Flex>
-                  </Alert>
+                <View as="div" style={{ height: 600, width: 740, maxWidth: '100%' }}>
                   <FaceLivenessDetector
                     key={selectedCamera || 'default'} // remount on switch
                     sessionId={sessionId}
@@ -471,7 +393,6 @@ export default function LivenessWidget(
                       setShowDetector(false);
                       setPhase('failed');
                     }}
-                    
                   />
                 </View>
               ) : (

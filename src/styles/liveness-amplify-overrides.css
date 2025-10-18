@@ -112,12 +112,20 @@
 .lv-instructions-text{margin:0; font-weight:600; font-size:clamp(.9rem,1.6vw,1rem);}
 
 /* Amplify’s instruction overlay → compact top toast (no dim) */
-.lv-scope .amplify-liveness-instruction-overlay{
+/* .lv-scope .amplify-liveness-instruction-overlay{
   position:absolute!important;
   inset:8px 8px auto 8px!important;
-  justify-content:center!important; align-items:stretch!important;
-  background:transparent!important; pointer-events:none; z-index:4;
+  justify-content:center!important; 
+  align-items:stretch!important;
+  background:transparent!important; 
+  pointer-events:none; z-index:4;
+} */
+
+.lv-scope .amplify-liveness-instruction-overlay{ display:none!important; }
+.amplify-liveness-toast__message div[aria-live="assertive"] {
+  display: none !important;
 }
+
 .lv-scope .amplify-liveness-toast{
   margin:0 auto!important; max-width:92%!important;
   border-radius:12px!important; box-shadow:0 10px 30px rgba(0,0,0,.08)!important;

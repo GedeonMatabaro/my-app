@@ -66,7 +66,11 @@ async function waitForResults(sessionId: string, maxTries = 10, delayMs = 400) {
 
 // --- API: Create session with OutputConfig (primary path) ---
 export async function createSessionServer() {
-  const Settings: any = { AuditImagesLimit: 2 }; // default is 0; bump so you get audits if needed
+  const Settings: any = { AuditImagesLimit: 2,
+    ChallengePreferences: [
+      { Type: 'FaceMovementChallenge', MaxRetries:5 },
+    ],
+   }; // default is 0; bump so you get audits if needed
 
   // Primary: ask Rekognition to write images straight to your Amplify bucket
   if (process.env.LIVENESS_BUCKET) {
