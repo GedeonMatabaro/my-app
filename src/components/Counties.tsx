@@ -54,7 +54,7 @@ export default function CountrySelect({
         {/* Dropdown content */}
         <DialogContent className="p-0 max-w-md w-[90vw] max-h-[90vh] overflow-hidden divide-y divide-gray-300 gap-0">
           <DialogTitle className="flex px-2 py-2 justify-center" >
-            <span className="font-semibold text-center">Country of Residence</span>
+            <span className="font-semibold text-center">Country of Issuance</span>
           </DialogTitle>
           <Command className="rounded rounded-t-none">
             <CommandInput placeholder="Search country..." className="h-9" />

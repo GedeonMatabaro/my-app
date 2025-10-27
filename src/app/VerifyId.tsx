@@ -120,7 +120,6 @@ export default function VerifyId(props: VerifyIdProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-teal-700">Dear, {name}, Verify your identity</h2>
-          <p className="text-sm text-muted-foreground">Pick your country and document type, then choose capture method.</p>
         </div>
       </div>
 

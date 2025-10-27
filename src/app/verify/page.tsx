@@ -22,7 +22,7 @@ export default function VerifyPage() {
   // ---------------------------------------------------
   // 🧠 States
   // ---------------------------------------------------
-  const [step, setStep] = useState<'id' | 'liveness' | 'summary'>('liveness');
+  const [step, setStep] = useState<'id' | 'liveness' | 'summary'>('id');
   const [loader, setLoader] = useState<{ show: boolean; message?: string }>({ show: false });
   const [idData, setIdData] = useState<IdDataDto | null>(null);
   const [livenessResults, setLivenessResults] = useState<LivenessResultDto[]>([]);
